@@ -3,4 +3,4 @@ module Main where
 import Log
 
 main :: IO ()
-main = parseMessage "a"
+main = (print . leftTrim) "   haaa"
