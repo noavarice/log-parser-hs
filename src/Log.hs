@@ -1,6 +1,6 @@
-module Log (
-    parseMessage,
-    leftTrim
+module Log ( parseMessage
+           , leftTrim
+           , getWord
 ) where
 
 import qualified Data.Char
@@ -22,6 +22,20 @@ parseMessage (x:xs) = LogMessage Info 13 "Text"
 
 type Validator = String -> Bool
 
+isNotSpace = (not . Data.Char.isSpace)
+
+skip :: [a] -> (a -> Bool) -> [a]
+skip [] _ = []
+skip list@(x:xs) f = if f x then list else skip xs f
+
 leftTrim :: String -> String
-leftTrim [] = []
-leftTrim str@(x:xs) = if (not . Data.Char.isSpace) x then str else leftTrim xs
+leftTrim str = skip str isNotSpace
+
+get :: [a] -> (a -> Bool) -> [a]
+get [] _ = []
+get list@(x:xs) f = if (not . f) x
+                    then []
+                    else x : get xs f
+
+getWord :: String -> String
+getWord str = get str isNotSpace
