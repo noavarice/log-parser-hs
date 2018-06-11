@@ -3,4 +3,4 @@ module Main where
 import Log
 
 main :: IO ()
-main = print $ parseMessage "W 1  "
+main = readFile "app/error.log" >>= (print . parse)

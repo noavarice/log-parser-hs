@@ -1,4 +1,4 @@
-module Log ( parseMessage
+module Log ( parse
 ) where
 
 import Data.Char (ord)
@@ -63,3 +63,6 @@ parseMessage str =
   if validLogEntry str
     then getMessage str
     else Unknown str
+
+parse :: String -> [LogMessage]
+parse str = map parseMessage (lines str)
