@@ -3,4 +3,4 @@ module Main where
 import Log
 
 main :: IO ()
-main = print $ validLogEntry "I 1 123 asd"
+main = print $ parseMessage "W 1  "
