@@ -1,6 +1,5 @@
 module Log ( parse
-           , build
-           , inOrder
+           , whatWentWrong
 ) where
 
 import Data.Char (ord)
@@ -91,3 +90,15 @@ build msgs = buildHelper msgs Leaf
 inOrder :: MessageTree -> [LogMessage]
 inOrder Leaf = []
 inOrder (Node left msg right) = (inOrder left) ++ (msg : (inOrder right))
+
+highSeverity :: LogMessage -> Bool
+highSeverity (LogMessage (Error severity) _ _) = severity >= 50
+highSeverity _ = False
+
+getText :: LogMessage -> String
+getText (Unknown text) = text
+getText (LogMessage _ _ text) = text
+
+whatWentWrong :: [LogMessage] -> [String]
+whatWentWrong [] = []
+whatWentWrong log = map getText $ filter highSeverity $ (inOrder . build) log
