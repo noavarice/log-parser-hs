@@ -1,4 +1,6 @@
 module Log ( parse
+           , build
+           , inOrder
 ) where
 
 import Data.Char (ord)
@@ -66,3 +68,26 @@ parseMessage str =
 
 parse :: String -> [LogMessage]
 parse str = map parseMessage (lines str)
+
+data MessageTree = Leaf
+                 | Node MessageTree LogMessage MessageTree
+
+insert :: LogMessage -> MessageTree -> MessageTree
+insert (Unknown _) tree = tree
+insert msg Leaf = Node Leaf msg Leaf
+insert msg@(LogMessage _ ts _) tree@(Node left rootMsg@(LogMessage _ rootTs _) right) =
+  if ts < rootTs
+    then Node (insert msg left) rootMsg right
+    else Node left rootMsg (insert msg right)
+
+buildHelper :: [LogMessage] -> MessageTree -> MessageTree
+buildHelper [] tree = tree
+buildHelper (x:xs) tree = buildHelper xs (insert x tree)
+
+build :: [LogMessage] -> MessageTree
+build [] = Leaf
+build msgs = buildHelper msgs Leaf
+
+inOrder :: MessageTree -> [LogMessage]
+inOrder Leaf = []
+inOrder (Node left msg right) = (inOrder left) ++ (msg : (inOrder right))
